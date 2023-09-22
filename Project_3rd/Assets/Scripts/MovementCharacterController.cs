@@ -50,6 +50,9 @@ public class MovementCharacterController : MonoBehaviour
         // CharacterController에 정의되엉 있는 Move() 메소드를 이용해 이동
         // 매개변수에 프레임 당 이동 거리 정보 적용 (이동 방향 * 이동 속도 * Time.deltaTime)
         characterController.Move(moveDirection * moveSpeed * Time.deltaTime);
+
+        // 현재 카메라가 바라보고 있는 전방 방향을 보도록 설정
+        transform.rotation = Quaternion.Euler(0, mainCamera.eulerAngles.y, 0);
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)

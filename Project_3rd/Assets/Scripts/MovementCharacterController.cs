@@ -14,6 +14,7 @@ public class MovementCharacterController : MonoBehaviour
     [SerializeField]
     private float jumpForce = 3.0f; // ¶Ù¾î¿À¸£´Â Èû
     private Vector3 moveDirection = Vector3.zero; // ÀÌµ¿ ¹æÇâ
+    private Animator animator;
 
     [SerializeField]
     private Transform mainCamera;
@@ -22,6 +23,7 @@ public class MovementCharacterController : MonoBehaviour
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -30,6 +32,17 @@ public class MovementCharacterController : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
+        if(x != 0 || z != 0)
+        {
+            //animator.Play("Run");
+            animator.SetFloat("moveSpeed", 1);
+        }
+        else
+        {
+            //animator.Play("Idle");
+            animator.SetFloat("moveSpeed", 0);
+        }
+;
         // moveDirection = new Vector3(x, moveDirection.y, z);
         Vector3 dir = mainCamera.rotation * new Vector3(x, 0, z);
         moveDirection = new Vector3(dir.x, moveDirection.y, dir.z);

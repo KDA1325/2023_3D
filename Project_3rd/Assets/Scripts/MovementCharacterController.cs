@@ -6,11 +6,13 @@ using UnityEngine;
 public class MovementCharacterController : MonoBehaviour
 {
     [SerializeField]
+    private float walkSpeed = 2.0f; // 걷기 속도
+    [SerializeField]
+    private float runSpeed = 5.0f; // 뛰기 속도
+    [SerializeField]
     private float moveSpeed = 5.0f; // 이동 속도
-
     [SerializeField]
     private float gravity = -9.81f; // 중력 계수
-
     [SerializeField]
     private float jumpForce = 3.0f; // 뛰어오르는 힘
     private Vector3 moveDirection = Vector3.zero; // 이동 방향
@@ -32,17 +34,27 @@ public class MovementCharacterController : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
-        if(x != 0 || z != 0)
-        {
-            //animator.Play("Run");
-            animator.SetFloat("moveSpeed", 1);
-        }
-        else
-        {
-            //animator.Play("Idle");
-            animator.SetFloat("moveSpeed", 0);
-        }
-;
+        //if(x != 0 || z != 0)
+        //{
+        //    //animator.Play("Run");
+        //    animator.SetFloat("moveSpeed", 1);
+        //}
+        //else
+        //{
+        //    //animator.Play("Idle");
+        //    animator.SetFloat("moveSpeed", 0);
+        //}
+
+        // Shift 키를 누르지 않으면 0.5, 누르면 1
+        float offset = 0.5f + Input.GetAxis("Sprint") * 0.5f;
+
+        animator.SetFloat("horizontal", x * offset);
+        animator.SetFloat("vertical", z * offset);
+
+        // 오브젝트의 이동 속도 설정(Shift 키를 누르지 않으면 walkSpeed, 누르면 runSpeed)
+        moveSpeed = Mathf.Lerp(walkSpeed, runSpeed, Input.GetAxis("Sprint"));
+
+        // 오브젝트의 이동 방향 설정
         // moveDirection = new Vector3(x, moveDirection.y, z);
         Vector3 dir = mainCamera.rotation * new Vector3(x, 0, z);
         moveDirection = new Vector3(dir.x, moveDirection.y, dir.z);
@@ -50,6 +62,7 @@ public class MovementCharacterController : MonoBehaviour
         // Space 키를 눌렀을 때 플레이어가 바닥에 있으면 점프
         if(Input.GetKeyDown(KeyCode.Space) && characterController.isGrounded == true)
         {
+            animator.SetTrigger("onJump");
             moveDirection.y = jumpForce;
         }
         
